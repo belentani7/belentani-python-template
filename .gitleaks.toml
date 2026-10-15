@@ -1,0 +1,76 @@
+# Gitleaks Configuration — Belentani Ecosystem
+# Detecta secretos en commits, PRs y historial
+
+[allowlist]
+description = "Allowlist for Belentani projects"
+paths = [
+  "*.md",
+  "*.txt",
+  "*.json.example",
+  "*.env.example",
+  "*.cff",
+  "CHANGELOG*",
+  "LICENSE*",
+  "CODEOWNERS",
+  "dependabot.yml",
+  "package-lock.json",
+  "pnpm-lock.yaml",
+  "uv.lock"
+]
+
+# Patrones específicos del ecosistema
+[[allowlist]]
+description = "Belentani specific patterns"
+regexes = [
+  '''belentani[_-]?[a-z]+''',  # project names
+  '''noi[a-z]+''',             # noiacore references
+]
+
+# Falsos positivos comunes en código
+[[allowlist]]
+description = "Common false positives in code"
+regexes = [
+  '''example''',
+  '''test''',
+  '''mock''',
+  '''dummy''',
+  '''placeholder''',
+  '''your-.*-key''',
+  '''change-in-production''',
+  '''min-32-chars''',
+]
+
+# Extensiones a escanear
+[git]
+allow_missing_config = true
+
+# Reglas personalizadas para el ecosistema
+[[rules]]
+id = "belentani-vercel-token"
+description = "Vercel tokens"
+regex = '''(?i)vercel[_-]?token['"\s:=]+[a-zA-Z0-9_-]{20,}'''
+tags = ["vercel", "token"]
+
+[[rules]]
+id = "belentani-supabase-key"
+description = "Supabase keys"
+regex = '''(?i)supabase[_-]?(key|secret|token)['"\s:=]+[a-zA-Z0-9_-]{20,}'''
+tags = ["supabase", "key"]
+
+[[rules]]
+id = "belentani-database-url"
+description = "Database URLs with credentials"
+regex = '''(?i)(postgres|mysql|mongodb)://[^:]+:[^@]+@'''
+tags = ["database", "credentials"]
+
+[[rules]]
+id = "belentani-jwt-secret"
+description = "JWT secrets"
+regex = '''(?i)(jwt|secret)[_-]?key['"\s:=]+[a-zA-Z0-9_-]{32,}'''
+tags = ["jwt", "secret"]
+
+[[rules]]
+id = "belentani-api-key-generic"
+description = "Generic API keys"
+regex = '''(?i)api[_-]?key['"\s:=]+[a-zA-Z0-9_-]{20,}'''
+tags = ["api", "key"]
